@@ -1,0 +1,66 @@
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+CREATE DATABASE IF NOT EXISTS tenisbd DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+USE tenisbd;
+
+DROP TABLE IF EXISTS grandslams;
+CREATE TABLE IF NOT EXISTS grandslams (
+  id int NOT NULL AUTO_INCREMENT,
+  nombre varchar(55) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  participantes int NOT NULL,
+  premio decimal(10,2) NOT NULL,
+  pista enum('TIERRA','HIERBA','DURA') NOT NULL,
+  ciudad varchar(55) NOT NULL,
+  pais varchar(55) NOT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO grandslams (id, nombre, participantes, premio, pista, ciudad, pais) VALUES
+(1, 'ROLAND GARROS', 256, '42900000.00', 'TIERRA', 'PARIS', 'FRANCIA'),
+(2, 'US OPEN', 256, '57462000.00', 'DURA', 'WASHINGTON', 'EEUU'),
+(3, 'WIMBLEDON', 128, '52238655.00', 'HIERBA', 'LONDRES', 'REINO UNIDO'),
+(4, 'OPEN AUSTRALIA', 128, '76500000.00', 'DURA', 'MELBOURNE', 'AUSTRALIA');
+
+DROP TABLE IF EXISTS participaciones;
+CREATE TABLE IF NOT EXISTS participaciones (
+  id int NOT NULL AUTO_INCREMENT,
+  idTenista int NOT NULL,
+  idGrandSlam int NOT NULL,
+  edicion int NOT NULL,
+  campeon tinyint NOT NULL,
+  PRIMARY KEY (id),
+  KEY participacionesTOtenistas (idTenista),
+  KEY participacionesTOgrandslams (idGrandSlam)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS tenistas;
+CREATE TABLE IF NOT EXISTS tenistas (
+  id int NOT NULL AUTO_INCREMENT,
+  nombre varchar(55) NOT NULL,
+  apellido1 varchar(55) NOT NULL,
+  apellido2 varchar(55) DEFAULT NULL,
+  mano enum('ZURDO','DIESTRO') NOT NULL,
+  activo tinyint NOT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO tenistas (id, nombre, apellido1, apellido2, mano, activo) VALUES
+(1, 'RAFAEL', 'NADAL', 'PARERA', 'ZURDO', 0),
+(2, 'CARLOS', 'ALCARAZ', 'GARFIA', 'DIESTRO', 1),
+(3, 'ROGER', 'FEDERER', '', 'DIESTRO', 0),
+(4, 'JOE', 'MCENROE', '', 'DIESTRO', 0),
+(5, 'NOVAK', 'DJOKOVIC', '', 'DIESTRO', 1);
+
+
+ALTER TABLE participaciones
+  ADD CONSTRAINT participacionesTOgrandslams FOREIGN KEY (idGrandSlam) REFERENCES grandslams (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT participacionesTOtenistas FOREIGN KEY (idTenista) REFERENCES tenistas (id) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
